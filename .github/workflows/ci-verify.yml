@@ -1,0 +1,29 @@
+name: CI Verify (alibaba/open-code-review)
+
+on:
+  push:
+    branches: ["ci/gha-verify"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-verify-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+      - name: Build
+        run: |
+          make build
+      - name: Show artifacts
+        run: ls -lh bin || true
